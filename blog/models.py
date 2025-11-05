@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -13,3 +15,32 @@ class Category(models.Model):
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
+
+
+class Post(models.Model):
+
+    class StatusChoices(models.TextChoices):
+        DRAFT = _("draft")
+        PUBLISHED = _("published")
+
+    title = models.CharField(verbose_name=_("title"), max_length=255)
+    slug = models.SlugField(verbose_name=_("slug"), allow_unicode=True, unique_for_date="publish_time")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, verbose_name=_("category"), null=True)
+    lead = models.CharField(verbose_name=_("lead"), max_length=1024, null=True, blank=True)
+    body = models. TextField(verbose_name=_("body"))
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name=_("author"), null=True)
+
+    created = models.DateTimeField(verbose_name=_("created"), auto_now_add=True)
+    updated = models.DateTimeField(verbose_name=_("updated"), auto_now=True)
+
+    status = models.CharField(verbose_name=_("status"), max_length=15, choices=StatusChoices.choices, default=StatusChoices.DRAFT)
+    featured = models.BooleanField(verbose_name=_("featured"), null=True)
+    publish_time = models.DateTimeField(verbose_name=_("publish time"), null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _("Post")
+        verbose_name_plural = _("Posts")
+        ordering = ["-publish_time"]
