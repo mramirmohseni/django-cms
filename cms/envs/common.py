@@ -55,7 +55,9 @@ ROOT_URLCONF = "cms.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            Path.joinpath(BASE_DIR, "../templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -75,8 +77,12 @@ WSGI_APPLICATION = "cms.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "django_cms",
+        "USER": "postgres",
+        "PASSWORD": "123@456",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
